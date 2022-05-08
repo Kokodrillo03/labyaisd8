@@ -24,24 +24,17 @@ public class BST<T> {
 	}
 
 	public Node getNode(T toFind){
-		if(toFind==null || root == null)return null;
-		Node actnode = root;
-		Link findl = (Link) toFind;
-		Link actlink = (Link) actnode.value;
-		while(actnode!=null && findl!=actlink){
-			actlink = (Link) actnode.value;
-			if(findl.compareTo(actlink)>=0){
-				actnode = actnode.right;
-			}else{
-				actnode = actnode.left;
-			}
-		}
-		if(actlink==findl)return actnode;
-		return null;
-
+		return getNode((Comparable<T>) toFind,root);
 	}
 
-
+	private Node getNode(Comparable<T> tofind, Node n){
+		if(n == null || n.value.equals(tofind))return n;
+		if(tofind.compareTo(n.value)<0){
+			return getNode(tofind,n.left);
+		}else{
+			return getNode(tofind,n.right);
+		}
+	}
 
 	public T getElement(T toFind) {
 		if(toFind==null || root == null)return null;
@@ -61,7 +54,22 @@ public class BST<T> {
 	}
 
 	public T successor(T elem) {
-		return null;
+		Node actnode = getNode(elem);
+		if(actnode.right!=null){
+			Node nextnode = actnode.right;
+			while(nextnode.left!=null){
+				nextnode = nextnode.left;
+			}
+			return nextnode.value;
+		}else{
+			Node parentnode = actnode.parent;
+			while(actnode!=parentnode.left&&parentnode!=root){
+				actnode = actnode.parent;
+				parentnode = actnode.parent;
+			}
+			if(parentnode.left==actnode)return parentnode.value;
+			return null;
+		}
 	}
 
 	public void inorder(Node n){
@@ -74,14 +82,14 @@ public class BST<T> {
 	public void preorder(Node n){
 		if(n == null) return;
 		retstr += n.value.toString() + ", ";
-		inorder(n.left);
-		inorder(n.right);
+		preorder(n.left);
+		preorder(n.right);
 	}
 
 	public void postorder(Node n){
 		if(n == null) return;
-		inorder(n.left);
-		inorder(n.right);
+		postorder(n.left);
+		postorder(n.right);
 		retstr += n.value.toString()  + ", ";
 	}
 
@@ -91,6 +99,7 @@ public class BST<T> {
 		}
 		retstr = "";
 		inorder(root);
+		retstr = retstr.substring(0, retstr.length()-2);
 		return retstr;
 	}
 
@@ -100,6 +109,7 @@ public class BST<T> {
 		}
 		retstr = "";
 		preorder(root);
+		retstr = retstr.substring(0, retstr.length()-2);
 		return retstr;
 	}
 
@@ -109,6 +119,7 @@ public class BST<T> {
 		}
 		retstr = "";
 		postorder(root);
+		retstr = retstr.substring(0, retstr.length()-2);
 		return retstr;
 	}
 
@@ -145,8 +156,38 @@ public class BST<T> {
 
 
 	public T remove(T value) {
-		// TODO
-		return null;
+		Node torem = getNode(value);
+		if(root==null)return null;
+		if(torem==null)return null;
+		if(torem.left==null || torem.right==null){
+			removes(torem);
+			return value;
+		}
+		Node suc = getNode(successor(value));
+		torem.value = suc.value;
+		removes(suc);
+		return value;
+	}
+
+	public void removes(Node torem){
+		if(torem.left==null&&torem.right==null){
+			Node temp = torem.parent;
+			if(temp.left.equals(torem))temp.left=null;
+			if(temp.right.equals(torem))temp.right=null;
+			return;
+		}
+		if (torem.left != null && torem.right == null) {
+			Node temp = torem.parent;
+			if(temp.left.equals(torem))temp.left=torem.left;
+			if(temp.right.equals(torem))temp.right=torem.left;
+			return;
+		}
+		if(torem.left == null && torem.right != null){
+			Node temp = torem.parent;
+			if(temp.left.equals(torem))temp.left=torem.right;
+			if(temp.right.equals(torem))temp.right=torem.right;
+			return;
+		}
 	}
 	
 	public void clear() {

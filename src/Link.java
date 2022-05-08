@@ -25,13 +25,7 @@ public class Link implements Comparable<Link>{
 	}
 	@Override
 	public int compareTo(Link another) {
-		if(this.weight > another.weight){
-			return 1;
-		}else if(this.weight < another.weight){
-			return -1;
-		}else{
-			return 0;
-		}
+		return this.ref.compareTo(another.ref);
 	}
 }
 
