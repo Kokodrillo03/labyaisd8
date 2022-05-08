@@ -159,14 +159,15 @@ public class BST<T> {
 		Node torem = getNode(value);
 		if(root==null)return null;
 		if(torem==null)return null;
+		T temp = torem.value;
 		if(torem.left==null || torem.right==null){
 			removes(torem);
-			return value;
+			return temp;
 		}
 		Node suc = getNode(successor(value));
 		torem.value = suc.value;
 		removes(suc);
-		return value;
+		return temp;
 	}
 
 	public void removes(Node torem){
